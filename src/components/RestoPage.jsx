@@ -1,17 +1,46 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import "./RestoPage.css";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
 
 function RestoPage() {
   const [showContactDetails, setShowContactDetails] = useState(false);
+  const [restaurant, setRestaurant] = useState({
+    _id: "",
+    name: "",
+    city_name: "",
+    city: "",
+    area: "",
+    locality: "",
+    thumb: "",
+    cost: "",
+    address: "",
+    Cuisine: [],
+  });
+
+  const { restaurant_id } = useParams();
+
+  const getRestaurantDetailsFromId = async () => {
+    const url = "http://localhost:3056/getSingleRestaurant/" + restaurant_id;
+    const { data } = await axios.get(url);
+
+    setRestaurant(...data.result);
+  };
+
+  console.log(restaurant);
+
+  useEffect(() => {
+    getRestaurantDetailsFromId();
+  }, []);
+
   return (
     <>
       <section className="row header-resto">
         <section className="col-lg-12  bg-danger header-resto ">
           <header className="container col-11  d-flex justify-content-between align-items-center py-lg-3 py-1 px-0 ">
             <p className="m-0 fs-3 bg-white text-danger brand fw-bold">
-              <Link to={"/"} className="text-dark">
+              <Link to={"/"} className="text-danger">
                 e!
               </Link>
             </p>
@@ -27,7 +56,7 @@ function RestoPage() {
 
       <main className="row col-lg-10 m-auto header-resto py-4 ">
         <div className="p-0">
-          <img src="./resto page.png" className="col-12" alt="food.png" />
+          <img src={restaurant.thumb} className="col-12" alt="food.png" />
           <h5 className="gallary  fw-bold border px-lg-4 px-2 py-2">
             Click to see Image Gallery
           </h5>
@@ -36,7 +65,7 @@ function RestoPage() {
         <section className="row gap-lg-2 gap-4  m-0 py-4">
           <div className=" d-flex flex-column gap-2">
             <div>
-              <h1>The big chill cakery</h1>
+              <h1>{restaurant.name}</h1>
             </div>
 
             <div className="d-flex justify-content-between align-items-end ">
@@ -78,11 +107,8 @@ function RestoPage() {
                   <p>+91 114004566</p>
                 </div>
                 <div>
-                  <h4>The big chill cakery</h4>
-                  <p>
-                    Shop 1, Plot D, Samruddhi Complex,
-                    <br /> <span>Chincholi, Mumbai-400002, Maharashtra</span>
-                  </p>
+                  <h4>{restaurant.name}</h4>
+                  <p>{restaurant.address}</p>
                 </div>
               </div>
             ) : (
@@ -92,11 +118,15 @@ function RestoPage() {
                 </div>
                 <div>
                   <h5>cuisine</h5>
-                  <p>Bakery, fast food</p>
+                  <p>
+                    {restaurant.Cuisine.map((cuisine) => cuisine.name).join(
+                      " , "
+                    )}
+                  </p>
                 </div>
                 <div>
                   <h5>Average Cost</h5>
-                  <p>Rs.700 for two persons (aprrox.)</p>
+                  <p>Rs.{restaurant.cost} for two persons (aprrox.)</p>
                 </div>
               </div>
             )}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./HomePage.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function HoamePage() {
@@ -24,6 +24,7 @@ function HoamePage() {
     ...initDataOflocation,
   });
 
+  const navigate = useNavigate();
   // getting the mealtypeList
   const getMealTypesList = async () => {
     try {
@@ -168,7 +169,7 @@ function HoamePage() {
                         <li
                           className="list-group-item d-flex col-12"
                           key={restaurant.name}
-                          // onClick={()=>}
+                          onClick={() => navigate(`/restaurant_page/${restaurant._id}`)}
                         >
                           <img
                             src={restaurant.thumb}
@@ -195,10 +196,8 @@ function HoamePage() {
       <section className="my-3">
         <main className="container">
           <section className="my-3 my-headings-2">
-            <h1 className="quick-search-text h3 fw-bold fs-2">
-              <Link to={"search"} className="text-dark">
-                Quick Search's
-              </Link>
+            <h1 className="quick-search-text h3 fw-bold fs-2 text-dark">
+              Quick Search's
             </h1>
             <p className="text-muted">Discover restaurants by type of meal</p>
           </section>

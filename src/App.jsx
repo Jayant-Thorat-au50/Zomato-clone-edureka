@@ -13,7 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePageZomato />} />
           <Route path="/search" element={<Zomatosearchpage />} />
-          <Route path="/resto" element={<RestoPage />} />
+          <Route path="/restaurant_page/:restaurant_id" element={<RestoPage />} />
           <Route path="/*" element={<PageNotFound />} />
         </Routes>
       </section>
