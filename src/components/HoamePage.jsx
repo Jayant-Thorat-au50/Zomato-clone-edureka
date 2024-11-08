@@ -169,7 +169,9 @@ function HoamePage() {
                         <li
                           className="list-group-item d-flex col-12"
                           key={restaurant.name}
-                          onClick={() => navigate(`/restaurant_page/${restaurant._id}`)}
+                          onClick={() =>
+                            navigate(`/restaurant_page/${restaurant._id}`)
+                          }
                         >
                           <img
                             src={restaurant.thumb}

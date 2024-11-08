@@ -56,7 +56,13 @@ background-color: transparent;
   border-radius: 9px;
   transition: .5s;
 }
-
+.border_bottom{
+  border-bottom: 2px solid red;
+}
+.caroselItems{
+  position: absolute;
+  top: 500px;
+}
 .gallary:hover{
   background-color: white;
   color: black;
