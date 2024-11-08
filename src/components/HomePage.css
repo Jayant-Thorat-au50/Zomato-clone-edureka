@@ -61,13 +61,13 @@ body {
 
   .locationList {
     position: absolute;
-    top: 265px;
+    top: 263px;
     left: 20px;
   }
 
   .restaurantList {
     position: absolute;
-    top: 324px;
+    top: 321.5px;
     left: 20px;
   }
   input {

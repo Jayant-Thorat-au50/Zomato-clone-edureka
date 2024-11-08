@@ -4,12 +4,25 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 function HoamePage() {
+  let initDataOflocation = {
+    _id: "",
+    name: "",
+    location_id: 0,
+    country_name: "",
+    city_id: 0,
+  };
+
   const [mealtypesList, setMealTypeList] = useState([]);
   const [locationList, setLocationList] = useState([]);
-  const [restaurantList, setRestaurantList] = useState([]);
+  const [restaurantList, setRestaurantList] = useState({
+    list: [],
+    message: "Search for restaurants",
+  });
   const [showLocation, setShowLocation] = useState(false);
   const [showrestaurants, setShowRestaurants] = useState(false);
-
+  const [selectedLocation, setSelectedLocation] = useState({
+    ...initDataOflocation,
+  });
 
   // getting the mealtypeList
   const getMealTypesList = async () => {
@@ -39,23 +52,52 @@ function HoamePage() {
   };
 
   // getting the restaurant list
-  const getRestaurantsList = async () => {
-    try {
-      const restaurantsList = "http://localhost:3056/getAllRestaurants";
+  // const getRestaurantsList = async () => {
+  //   try {
+  //     const restaurantsList = "http://localhost:3056/getAllRestaurants";
 
-      const response = await axios.get(restaurantsList);
-      setRestaurantList(response.data.result);
-    } catch (error) {
-      alert("server error");
-      console.log(error);
-    }
+  //     const response = await axios.get(restaurantsList);
+
+  //     setRestaurantList(response.data.result);
+  //   } catch (error) {
+  //     alert("server error");
+  //     console.log(error);
+  //   }
+  // };
+
+  //getSelectedLocationDetails
+  const getSelectedLocationDetails = (id) => {
+    setSelectedLocation(locationList[id]);
+    console.log(locationList[id].location_id);
+    setShowLocation(false);
+  };
+
+  // get restaurants for the selected location by locations id
+  const getRestaurantListByLocationId = async () => {
+    const url =
+      "http://localhost:3056/getRestaurantsListByLocationId/" +
+      selectedLocation.location_id;
+    const { data } = await axios.get(url);
+    console.log(data);
+
+    setRestaurantList({
+      list: data,
+      message:
+        data.length > 1
+          ? `${data.length} Restaurants found`
+          : `${data.length} Restaurant found`,
+    });
+    setShowRestaurants(true);
   };
 
   useEffect(() => {
     getMealTypesList();
     getLocationList();
-    getRestaurantsList();
   }, []);
+
+  useEffect(() => {
+    getRestaurantListByLocationId();
+  }, [selectedLocation]);
 
   return (
     <section className="row">
@@ -87,31 +129,62 @@ function HoamePage() {
                 placeholder="Please enter a location"
                 className="col-lg-12 col-11 m-lg-0 m-auto form-check border border-0 search-text two_inputs_childs locationInput"
                 readOnly
-                onClick={() => setShowLocation(!showLocation)}
+                value={selectedLocation.name}
+                onClick={() => {
+                  setShowRestaurants(false);
+                  setShowLocation(!showLocation);
+                }}
               />
 
               {showLocation ? (
                 <ul className="list-group locationList col-lg-2 col-11 mx-lg-0  ">
-                  {locationList.map((location) => (
-                    <li className="list-group-item ">{location.name}</li>
+                  {locationList.map((location, index) => (
+                    <li
+                      key={location._id}
+                      className="list-group-item "
+                      onClick={() => getSelectedLocationDetails(index)}
+                    >
+                      {location.name}
+                    </li>
                   ))}
                 </ul>
               ) : null}
             </div>
 
-            <div className="col-lg-4 col-12 ">
+            <div className="col-lg-4 col-12 d-flex ">
+              {/* <i className="fa-regular fa-magnifying-glass col-1 bg-white fs-2"></i> */}
               <input
                 type="text"
-                placeholder=" Search for restaurants"
+                placeholder={restaurantList.message}
                 className="col-11 m-lg-0 m-auto col-lg-12 form-check border border-0 search-text two_inputs_childs"
                 readOnly
                 onClick={() => setShowRestaurants(!showrestaurants)}
               />
               {showrestaurants ? (
                 <ul className="list-group restaurantList col-lg-4 col-11 mx-lg-0">
-                  {restaurantList.map((restaurant) => (
-                    <li className="list-group-item ">{restaurant.name}</li>
-                  ))}
+                  {restaurantList.list.length == 0
+                    ? null
+                    : restaurantList.list.map((restaurant) => (
+                        <li
+                          className="list-group-item d-flex col-12"
+                          key={restaurant.name}
+                          // onClick={()=>}
+                        >
+                          <img
+                            src={restaurant.thumb}
+                            style={{
+                              height: 55,
+                              width: 55,
+                              borderRadius: "15px",
+                            }}
+                            className="mx-3"
+                          />
+
+                          <p className="">
+                            {restaurant.name},{restaurant.city_name}
+                          </p>
+                        </li>
+                      ))}
                 </ul>
               ) : null}
             </div>
@@ -135,7 +208,7 @@ function HoamePage() {
             <Link className="w-100 d-flex flex-wrap gap-2" to={"/Resto"}>
               {mealtypesList.map((restaurant) => (
                 <article
-                  key={restaurant.id}
+                  key={restaurant._id}
                   className="article-shadow mb-4 gap-lg-0 meal-member gap-3 d-flex justify-content-start align-items-center bg-white pe-lg-4 p-0"
                 >
                   <img
