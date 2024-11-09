@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import "./RestoPage.css";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
@@ -87,6 +87,8 @@ function RestoPage() {
                 <div className="modal-body ">
                   <div></div>
                   {MenuList.map((menu, index) => {
+                   
+                    
                     return (
                       <div className="row p-2" key={menu._id}>
                         <div className="col-8">
@@ -109,16 +111,16 @@ function RestoPage() {
                                 Add
                               </button>
                             ) : (
-                              <div className="order-item-count d-flex gap-3 section border border-1 border-dark ">
+                              <div className="order-item-count d-flex  section  ">
                                 <span
-                                  className="hand"
+                                  className="hand border border-1 bg-secondary px-1"
                                   onClick={() => decQty(index)}
                                 >
                                   -
                                 </span>
-                                <span>{menu.qty}</span>
+                                <span className="m-0 border border-1 bg-secondary px-2 text-dark">{menu.qty}</span>
                                 <span
-                                  className="hand"
+                                  className="hand border border-1 bg-secondary px-1"
                                   onClick={() => incQty(index)}
                                 >
                                   +
@@ -268,15 +270,14 @@ function RestoPage() {
 
           {/* onload UI part */}
 
-
-      <Header/>
+          <Header />
           <main className="row col-lg-10 m-auto header-resto py-4 ">
             <div className="p-0">
               <img src={restaurant.thumb} className="col-12" alt="food.png" />
               <button
                 data-bs-toggle="modal"
                 data-bs-target="#slideShow"
-                className="gallary btn btn-outline-light fw-bold border px-lg-4 px-2 py-2 text-dark bg-transparent border-2 border border-dark fw-bold"
+                className="gallary btn btn-outline-light fw-bold border px-lg-4 px-2 py-2 text-dark  border-2 border border-dark fw-bold"
                 // onClick={() => setCarouselList(restaurant.thumbs)}
               >
                 Click to see Image Gallery

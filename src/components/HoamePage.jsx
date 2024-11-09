@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./HomePage.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { IoSearch  } from "react-icons/io5";
 
 function HoamePage() {
   let initDataOflocation = {
@@ -103,10 +104,10 @@ function HoamePage() {
   return (
     <section className="row">
       <section className="col-12  bg-danger header">
-        <header className="col-12 flow py-3 mt-2">
+        <header className="col-12 flow py-4 mt-2">
           <section className="container col-12 d-lg-flex flex-row justify-content-end d-none">
             <button className="btn text-white m-0 fs-4">Login</button>
-            <button className="btn btn-outline-light px-2 m-0 fs-4">
+            <button className="btn btn-outline-light px-2 m-0 fs-5 py-0">
               Create an account
             </button>
           </section>
@@ -152,15 +153,18 @@ function HoamePage() {
               ) : null}
             </div>
 
-            <div className="col-lg-4 col-12 d-flex ">
+            <div className="col-lg-4 col-12 d-flex align-items-center ">
               {/* <i className="fa-regular fa-magnifying-glass col-1 bg-white fs-2"></i> */}
+              <div className="col-11 col-lg-12 d-flex  mx-auto">
+                <div className="fs-2 col-1 col-lg-0 px-2 bg-white search-icon"><IoSearch /></div>
               <input
                 type="text"
                 placeholder={restaurantList.message}
-                className="col-11 m-lg-0 m-auto col-lg-12 form-check border border-0 search-text two_inputs_childs"
+                className="col-11 m-lg-0  col-lg-10 input-restaurant form-check border border-0 search-text two_inputs_childs"
                 readOnly
                 onClick={() => setShowRestaurants(!showrestaurants)}
               />
+              </div>
               {showrestaurants ? (
                 <ul className="list-group restaurantList col-lg-4 col-11 mx-lg-0">
                   {restaurantList.list.length == 0
@@ -214,7 +218,7 @@ function HoamePage() {
                   className="article-shadow mb-4 gap-lg-0 meal-member gap-3 d-flex justify-content-start align-items-center bg-white pe-lg-4 p-0"
                 >
                   <img
-                    src={"/images/" + restaurant.image}
+                    src={restaurant.image}
                     alt=""
                     height="140px"
                     width="160px"

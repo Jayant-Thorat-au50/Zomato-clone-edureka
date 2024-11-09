@@ -50,11 +50,11 @@ select {
 .gallary {
   color: white;
   position: absolute;
-  top: 450px;
-  left: 900px;
+  top: 470px;
+  left: 950px;
 background-color: transparent;
   border-radius: 9px;
-  transition: .5s;
+  transition: .7s;
 }
 .border_bottom{
   border-bottom: 2px solid red;
@@ -66,6 +66,14 @@ background-color: transparent;
 .gallary:hover{
   background-color: white;
   color: black;
+}
+.menu-food-item{
+  position: relative;
+}
+
+.add,.order-item-count{
+  position: absolute;
+  bottom: -6px;
 }
 
 img{
