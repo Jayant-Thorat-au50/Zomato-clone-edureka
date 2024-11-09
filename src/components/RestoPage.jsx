@@ -5,26 +5,17 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
+import Header from "./Header/Header";
 
 function RestoPage() {
   const [showContactDetails, setShowContactDetails] = useState(false);
-  // const [CarouselList, setCarouselList] = useState([' ']);
   const [restaurant, setRestaurant] = useState(null);
   const [MenuList, setMenuList] = useState([]);
   let [totalPrice, setTotalPrice] = useState(0);
-  // _id: "",
-  // name: "",
-  // city_name: "",
-  // city: "",
-  // area: "",
-  // locality: "",
-  // thumb: "",
-  // cost: "",
-  // address: "",
-  // Cuisine: [],
 
   const { restaurant_id } = useParams();
 
+  // get restaurants List
   const getRestaurantDetailsFromId = async () => {
     console.log(restaurant);
 
@@ -51,7 +42,6 @@ function RestoPage() {
     setMenuList(newMenuList);
     // set price in the total price
     setTotalPrice(totalPrice);
-
   };
 
   const decQty = (index) => {
@@ -62,7 +52,6 @@ function RestoPage() {
     setMenuList(newMenuList);
     // set price in the total price
     setTotalPrice(totalPrice);
-
   };
 
   useEffect(() => {
@@ -74,7 +63,7 @@ function RestoPage() {
     <>
       {restaurant === null ? null : (
         <>
-                  {/* select menu modal */}
+          {/* select menu modal */}
           <div
             className="modal fade"
             id="exampleModalToggle"
@@ -84,7 +73,7 @@ function RestoPage() {
           >
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
-              <div className="modal-header">
+                <div className="modal-header">
                   <h5 className="modal-title" id="exampleModalToggleLabel">
                     {restaurant.name}
                   </h5>
@@ -160,12 +149,92 @@ function RestoPage() {
             </div>
           </div>
 
-             {/* user deatils before payment */}
+          {/* user deatils before payment */}
 
+          <div
+            className="modal fade"
+            id="exampleModalToggle2"
+            aria-hidden="true"
+            aria-labelledby="exampleModalToggleLabel2"
+            tabIndex="-1"
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="exampleModalToggleLabel2">
+                    User Details
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <div className="mb-3">
+                    <label
+                      htmlFor="exampleFormControlInput1"
+                      className="form-label"
+                    >
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="exampleFormControlInput1"
+                      placeholder="Enter full Name"
+                      onChange={() => {}}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label
+                      htmlFor="exampleFormControlInput1"
+                      className="form-label"
+                    >
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="exampleFormControlInput1"
+                      placeholder="name@example.com"
+                      onChange={() => {}}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label
+                      htmlFor="exampleFormControlTextarea1"
+                      className="form-label"
+                    >
+                      Address
+                    </label>
+                    <textarea
+                      className="form-control"
+                      id="exampleFormControlTextarea1"
+                      rows="3"
+                      onChange={() => {}}
+                    ></textarea>
+                  </div>
+                  <i>
+                    Your payment for this order is{" "}
+                    <b className="text-primary">{totalPrice} /-</b>
+                  </i>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    className="btn btn-danger"
+                    data-bs-target="#exampleModalToggle"
+                    data-bs-toggle="modal"
+                  >
+                    Back
+                  </button>
 
-
-
-
+                  <button className="btn btn-success">Pay Now</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* gallary Carousel Modal */}
 
@@ -197,29 +266,10 @@ function RestoPage() {
             </div>
           </div>
 
+          {/* onload UI part */}
 
-                 {/* onload UI part */}
 
-          <section className="row header-resto">
-            <section className="col-lg-12  bg-danger header-resto ">
-              <header className="container col-11  d-flex justify-content-between align-items-center py-lg-3 py-1 px-0 ">
-                <p className="m-0 fs-3 bg-white text-danger brand fw-bold">
-                  <Link to={"/"} className="text-danger">
-                    e!
-                  </Link>
-                </p>
-                <div>
-                  <button className="btn border-0 text-white fs-5 ">
-                    Login
-                  </button>
-                  <button className="btn btn-outline-light fs-5 px-lg-3 py-lg-1 px-lg-2 px-2  py-0">
-                    Create an account
-                  </button>
-                </div>
-              </header>
-            </section>
-          </section>
-
+      <Header/>
           <main className="row col-lg-10 m-auto header-resto py-4 ">
             <div className="p-0">
               <img src={restaurant.thumb} className="col-12" alt="food.png" />

@@ -123,7 +123,7 @@ function HoamePage() {
             </h1>
           </section>
 
-          <section className="d-flex justify-content-center align-items-start flex-lg-row flex-column gap-lg-4 gap-2 col-12 my-4 mb-5  ">
+          <section className="d-flex justify-content-center align-items-start flex-lg-row flex-column gap-lg-1 gap-2 col-12 my-4 mb-5  ">
             <div className="col-lg-2 col-12">
               <input
                 type="text"

@@ -50,6 +50,10 @@ body {
   width: 32%;
 }
 
+input {
+  border-radius: 5px;
+}
+
 @media (max-width: 576px) {
   .div1 {
     width: 100%;
