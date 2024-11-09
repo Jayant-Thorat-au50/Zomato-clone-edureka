@@ -167,7 +167,7 @@ function HoamePage() {
                     ? null
                     : restaurantList.list.map((restaurant) => (
                         <li
-                          className="list-group-item d-flex col-12"
+                          className="list-group-item d-flex align-items-center fw-bold text-primary border border-2 col-12"
                           key={restaurant.name}
                           onClick={() =>
                             navigate(`/restaurant_page/${restaurant._id}`)
@@ -176,15 +176,16 @@ function HoamePage() {
                           <img
                             src={restaurant.thumb}
                             style={{
-                              height: 55,
-                              width: 55,
+                              height: 65,
+                              width: 75,
                               borderRadius: "15px",
                             }}
                             className="mx-3"
                           />
 
                           <p className="">
-                            {restaurant.name},{restaurant.city_name}
+                            {restaurant.name},{restaurant.city_name} <br />
+                            <p className=" fw-light text-dark m-0">{restaurant.address}</p>
                           </p>
                         </li>
                       ))}

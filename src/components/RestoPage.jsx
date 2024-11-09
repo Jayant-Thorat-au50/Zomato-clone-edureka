@@ -10,6 +10,8 @@ function RestoPage() {
   const [showContactDetails, setShowContactDetails] = useState(false);
   // const [CarouselList, setCarouselList] = useState([' ']);
   const [restaurant, setRestaurant] = useState(null);
+  const [MenuList, setMenuList] = useState([]);
+  let [totalPrice, setTotalPrice] = useState(0);
   // _id: "",
   // name: "",
   // city_name: "",
@@ -32,14 +34,141 @@ function RestoPage() {
     setRestaurant(...data.result);
   };
 
+  //get menu List
+  const getMenuList = async () => {
+    const url = "http://localhost:3056/getMenuItemsList";
+    const response = await axios.get(url);
+
+    console.log(response.data.result);
+    setMenuList(response.data.result);
+  };
+
+  const incQty = (index) => {
+    // incerease the qty
+    let newMenuList = [...MenuList];
+    newMenuList[index].qty += 1;
+    totalPrice += newMenuList[index].price;
+    setMenuList(newMenuList);
+    // set price in the total price
+    setTotalPrice(totalPrice);
+
+  };
+
+  const decQty = (index) => {
+    // decrease the qty
+    let newMenuList = [...MenuList];
+    newMenuList[index].qty -= 1;
+    totalPrice -= newMenuList[index].price;
+    setMenuList(newMenuList);
+    // set price in the total price
+    setTotalPrice(totalPrice);
+
+  };
+
   useEffect(() => {
     getRestaurantDetailsFromId();
+    getMenuList();
   }, []);
 
   return (
     <>
       {restaurant === null ? null : (
         <>
+                  {/* select menu modal */}
+          <div
+            className="modal fade"
+            id="exampleModalToggle"
+            aria-hidden="true"
+            aria-labelledby="exampleModalToggleLabel"
+            tabIndex="-1"
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+              <div className="modal-header">
+                  <h5 className="modal-title" id="exampleModalToggleLabel">
+                    {restaurant.name}
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div className="modal-body ">
+                  <div></div>
+                  {MenuList.map((menu, index) => {
+                    return (
+                      <div className="row p-2" key={menu._id}>
+                        <div className="col-8">
+                          <p className="mb-1 h6">{menu.name}</p>
+                          <p className="mb-1">₹ {menu.price} /-</p>
+                          <p className="small text-muted">{menu.description}</p>
+                        </div>
+                        <div className="col-4 d-flex justify-content-end">
+                          <div className="menu-food-item d-flex flex-column align-items-center">
+                            <img
+                              src={menu.img}
+                              alt=""
+                              style={{ height: 100, width: 150 }}
+                            />
+                            {menu.qty === 0 ? (
+                              <button
+                                onClick={() => incQty(index)}
+                                className="btn btn-primary btn-sm add"
+                              >
+                                Add
+                              </button>
+                            ) : (
+                              <div className="order-item-count d-flex gap-3 section border border-1 border-dark ">
+                                <span
+                                  className="hand"
+                                  onClick={() => decQty(index)}
+                                >
+                                  -
+                                </span>
+                                <span>{menu.qty}</span>
+                                <span
+                                  className="hand"
+                                  onClick={() => incQty(index)}
+                                >
+                                  +
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <hr className=" p-0 my-2" />
+                      </div>
+                    );
+                  })}
+
+                  {totalPrice > 0 ? (
+                    <div className="d-flex justify-content-between">
+                      <h3>Total: {totalPrice} /-</h3>
+                      <button
+                        className="btn btn-danger"
+                        data-bs-target="#exampleModalToggle2"
+                        data-bs-toggle="modal"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          </div>
+
+             {/* user deatils before payment */}
+
+
+
+
+
+
+          {/* gallary Carousel Modal */}
+
           <div
             className="modal fade bg-dark"
             id="slideShow"
@@ -52,15 +181,13 @@ function RestoPage() {
                 <div className=" ">
                   <Carousel showThumbs={false} infiniteLoop={true}>
                     {restaurant.thumbs.map((value, index) => {
-                   
-
                       return (
                         <div key={index} className="w-100">
-                          <img 
-                          className=""
-                            style={{borderRadius:'4%'}}
-                          
-                          src={value} />
+                          <img
+                            className=""
+                            style={{ borderRadius: "4%" }}
+                            src={value}
+                          />
                         </div>
                       );
                     })}
@@ -69,6 +196,10 @@ function RestoPage() {
               </div>
             </div>
           </div>
+
+
+                 {/* onload UI part */}
+
           <section className="row header-resto">
             <section className="col-lg-12  bg-danger header-resto ">
               <header className="container col-11  d-flex justify-content-between align-items-center py-lg-3 py-1 px-0 ">
@@ -131,8 +262,12 @@ function RestoPage() {
                       Contact
                     </h5>
                   </div>
-                  <button className="placeBtn bg-danger text-white fw-bold px-lg-4 px-3 fs-6 py-2 border border-0">
-                    Place online order
+                  <button
+                    className="placeBtn bg-danger text-white fw-bold px-lg-4 px-3 fs-6 py-2 border border-0"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModalToggle"
+                  >
+                    Select menu
                   </button>
                 </div>
               </div>
