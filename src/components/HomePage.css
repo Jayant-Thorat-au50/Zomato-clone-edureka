@@ -11,11 +11,14 @@
 .locationInput {
   position: relative;
 }
+.input-wrapper{
+  position: relative;
+}
 
 .locationList,
 .restaurantList {
   position: absolute;
-  top: 300px;
+  top: 50.5px;
 }
 
 .meal-member {
@@ -72,19 +75,23 @@ body {
   .meal-member {
     width: 100%;
   }
+  .z-99{
+  z-index: 99;
+  }
 
   .locationList {
     position: absolute;
-    top: 263px;
+    top:50px;
     left: 20px;
   }
 
   .restaurantList {
     position: absolute;
-    top: 338px;
+    top: 50.2px;
     left: 20px;
   }
   .input-restaurant{
+    position: relative;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
   }

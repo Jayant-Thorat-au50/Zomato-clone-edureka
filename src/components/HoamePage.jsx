@@ -125,7 +125,7 @@ function HoamePage() {
           </section>
 
           <section className="d-flex justify-content-center align-items-start flex-lg-row flex-column gap-lg-1 gap-2 col-12 my-4 mb-5  ">
-            <div className="col-lg-2 col-12">
+            <div className="col-lg-2 col-12 input-wrapper">
               <input
                 type="text"
                 placeholder="Please enter a location"
@@ -139,11 +139,11 @@ function HoamePage() {
               />
 
               {showLocation ? (
-                <ul className="list-group locationList col-lg-2 col-11 mx-lg-0  ">
+                <ul className="list-group locationList z-99  col-lg-12 col-11 mx-lg-0  ">
                   {locationList.map((location, index) => (
                     <li
                       key={location._id}
-                      className="list-group-item "
+                      className="list-group-item  "
                       onClick={() => getSelectedLocationDetails(index)}
                     >
                       {location.name}
@@ -153,10 +153,10 @@ function HoamePage() {
               ) : null}
             </div>
 
-            <div className="col-lg-4 col-12 d-flex align-items-center ">
+            <div className="col-lg-4 col-12 d-flex align-items-center input-wrapper justify-content-start   ">
               {/* <i className="fa-regular fa-magnifying-glass col-1 bg-white fs-2"></i> */}
-              <div className="col-11 col-lg-12 d-flex  mx-auto">
-                <div className="fs-2 col-1 col-lg-0 px-2 bg-white search-icon"><IoSearch /></div>
+              <div className="col-11 col-lg-12 d-flex  m-lg-0 mx-auto ">
+                <div className="fs-2  col-lg-0 col-1 px-2 bg-white search-icon"><IoSearch /></div>
               <input
                 type="text"
                 placeholder={restaurantList.message}
@@ -166,12 +166,12 @@ function HoamePage() {
               />
               </div>
               {showrestaurants ? (
-                <ul className="list-group restaurantList col-lg-4 col-11 mx-lg-0">
+                <ul className="list-group restaurantList col-lg-11 col-11  mx-lg-0">
                   {restaurantList.list.length == 0
                     ? null
                     : restaurantList.list.map((restaurant) => (
                         <li
-                          className="list-group-item d-flex align-items-center fw-bold text-primary border border-2 col-12"
+                          className="list-group-item d-flex align-items-center fw-bold text-primary col-12"
                           key={restaurant.name}
                           onClick={() =>
                             navigate(`/restaurant_page/${restaurant._id}`)
