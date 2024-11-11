@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./HomePage.css";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { IoSearch  } from "react-icons/io5";
+
+import { IoSearch } from "react-icons/io5";
+import UseMealTypes from "../Hooks/UseMealTypes";
+import UseLocations from "../Hooks/UseLocations";
+import UseRestaurantsForTheSElectedLocation from "../Hooks/UseRestaurantsForTheSElectedLocation";
 
 function HoamePage() {
   let initDataOflocation = {
@@ -13,93 +16,28 @@ function HoamePage() {
     city_id: 0,
   };
 
-  const [mealtypesList, setMealTypeList] = useState([]);
-  const [locationList, setLocationList] = useState([]);
-  const [restaurantList, setRestaurantList] = useState({
-    list: [],
-    message: "Search for restaurants",
-  });
   const [showLocation, setShowLocation] = useState(false);
-  const [showrestaurants, setShowRestaurants] = useState(false);
+  // const [showrestaurants, setShowRestaurants] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState({
     ...initDataOflocation,
   });
 
   const navigate = useNavigate();
-  // getting the mealtypeList
-  const getMealTypesList = async () => {
-    try {
-      const listOfMealTypes = "http://localhost:3056/getAllmealTypes";
-
-      const response = await axios.get(listOfMealTypes);
-      setMealTypeList(response.data);
-    } catch (error) {
-      alert("server error");
-      console.log(error);
-    }
-  };
+  const [mealtypesList] = UseMealTypes();
 
   // getting the locationList
-  const getLocationList = async () => {
-    try {
-      const locationList = "http://localhost:3056/getTheNamesOfAllLocations";
-
-      const response = await axios.get(locationList);
-
-      setLocationList(response.data.result);
-    } catch (error) {
-      alert("server error");
-      console.log(error);
-    }
-  };
-
-  // getting the restaurant list
-  // const getRestaurantsList = async () => {
-  //   try {
-  //     const restaurantsList = "http://localhost:3056/getAllRestaurants";
-
-  //     const response = await axios.get(restaurantsList);
-
-  //     setRestaurantList(response.data.result);
-  //   } catch (error) {
-  //     alert("server error");
-  //     console.log(error);
-  //   }
-  // };
+  const [locationList] = UseLocations();
 
   //getSelectedLocationDetails
   const getSelectedLocationDetails = (id) => {
     setSelectedLocation(locationList[id]);
-    console.log(locationList[id].location_id);
+    console.log(locationList[id]);
     setShowLocation(false);
   };
 
   // get restaurants for the selected location by locations id
-  const getRestaurantListByLocationId = async () => {
-    const url =
-      "http://localhost:3056/getRestaurantsListByLocationId/" +
-      selectedLocation.location_id;
-    const { data } = await axios.get(url);
-    console.log(data);
-
-    setRestaurantList({
-      list: data,
-      message:
-        data.length > 1
-          ? `${data.length} Restaurants found`
-          : `${data.length} Restaurant found`,
-    });
-    setShowRestaurants(true);
-  };
-
-  useEffect(() => {
-    getMealTypesList();
-    getLocationList();
-  }, []);
-
-  useEffect(() => {
-    getRestaurantListByLocationId();
-  }, [selectedLocation]);
+  const [restaurantList, showrestaurants, setShowRestaurants] =
+    UseRestaurantsForTheSElectedLocation(selectedLocation);
 
   return (
     <section className="row">
@@ -132,6 +70,7 @@ function HoamePage() {
                 className="col-lg-12 col-11 m-lg-0 m-auto form-check border border-0 search-text two_inputs_childs locationInput"
                 readOnly
                 value={selectedLocation.name}
+                onChange={() => getSelectedLocationDetails()}
                 onClick={() => {
                   setShowRestaurants(false);
                   setShowLocation(!showLocation);
@@ -139,7 +78,7 @@ function HoamePage() {
               />
 
               {showLocation ? (
-                <ul className="list-group locationList z-99  col-lg-12 col-11 mx-lg-0  ">
+                <ul className="list-group locationList col-lg-12 col-11 mx-lg-0  ">
                   {locationList.map((location, index) => (
                     <li
                       key={location._id}
@@ -156,14 +95,16 @@ function HoamePage() {
             <div className="col-lg-4 col-12 d-flex align-items-center input-wrapper justify-content-start   ">
               {/* <i className="fa-regular fa-magnifying-glass col-1 bg-white fs-2"></i> */}
               <div className="col-11 col-lg-12 d-flex  m-lg-0 mx-auto ">
-                <div className="fs-2  col-lg-0 col-1 px-2 bg-white search-icon"><IoSearch /></div>
-              <input
-                type="text"
-                placeholder={restaurantList.message}
-                className="col-11 m-lg-0  col-lg-10 input-restaurant form-check border border-0 search-text two_inputs_childs"
-                readOnly
-                onClick={() => setShowRestaurants(!showrestaurants)}
-              />
+                <div className="fs-2  col-lg-0 col-1 px-2 bg-white search-icon">
+                  <IoSearch />
+                </div>
+                <input
+                  type="text"
+                  placeholder={restaurantList.message}
+                  className="col-11 m-lg-0  col-lg-10 input-restaurant form-check border border-0 search-text two_inputs_childs"
+                  readOnly
+                  onClick={() => setShowRestaurants(!showrestaurants)}
+                />
               </div>
               {showrestaurants ? (
                 <ul className="list-group restaurantList col-lg-11 col-11  mx-lg-0">
@@ -189,7 +130,9 @@ function HoamePage() {
 
                           <p className="">
                             {restaurant.name},{restaurant.city_name} <br />
-                            <p className=" fw-light text-dark m-0">{restaurant.address}</p>
+                            <p className=" fw-light text-dark m-0">
+                              {restaurant.address}
+                            </p>
                           </p>
                         </li>
                       ))}
