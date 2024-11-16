@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./HomePage.css";
 import { Link, useNavigate } from "react-router-dom";
-
 import { IoSearch } from "react-icons/io5";
 import UseMealTypes from "../Hooks/UseMealTypes";
 import UseLocations from "../Hooks/UseLocations";

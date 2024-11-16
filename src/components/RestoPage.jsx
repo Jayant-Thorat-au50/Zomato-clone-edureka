@@ -54,6 +54,51 @@ function RestoPage() {
     setTotalPrice(totalPrice);
   };
 
+  const getPaymentView = async () => {
+    const url = "http://localhost:3056/create-order";
+
+    const {data} = await axios.post(url, { amount:totalPrice});
+
+   console.log(data);
+   
+
+    // Open Razorpay Checkout
+    const options = {
+      key: "rzp_test_RB0WElnRLezVJ5", // Replace with your Razorpay key_id
+      amount: totalPrice * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+      currency: "INR",
+      name: "Food Delivery App",
+      description: "Test Transaction",
+      
+      order_id: data.order.id, // This is the order_id created in the backend
+      // callback_url: "http://localhost:3000/payment-success", // Your success URL
+      handler : async (response)=>{
+        console.log(response);
+        
+        const verifyUrl = 'http://localhost:3056/verifyPayment'
+        
+        let sendData = {
+          payment_id: response.razorpay_payment_id,
+          order_id: response.razorpay_order_id,
+          signature: response.razorpay_signature,
+        }
+        const result = await axios.post(verifyUrl,{data:sendData})
+
+        console.log(result);
+        
+         
+      },
+      prefill: {
+        name: "deepak shinde",
+        email: "jayantthorat1999@gmail.com",
+        contact: "916741544474",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
   useEffect(() => {
     getRestaurantDetailsFromId();
     getMenuList();
@@ -71,7 +116,7 @@ function RestoPage() {
             aria-labelledby="exampleModalToggleLabel"
             tabIndex="-1"
           >
-            <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title" id="exampleModalToggleLabel">
@@ -87,12 +132,10 @@ function RestoPage() {
                 <div className="modal-body ">
                   <div></div>
                   {MenuList.map((menu, index) => {
-                   
-                    
                     return (
                       <div className="row p-2" key={menu._id}>
                         <div className="col-8">
-                          <p className="mb-1 h6">{menu.name}</p>
+                          <p className="mb-1 fw-bold fs-5 h6">{menu.name}</p>
                           <p className="mb-1">₹ {menu.price} /-</p>
                           <p className="small text-muted">{menu.description}</p>
                         </div>
@@ -118,7 +161,9 @@ function RestoPage() {
                                 >
                                   -
                                 </span>
-                                <span className="m-0 border border-1 bg-secondary px-2 text-dark">{menu.qty}</span>
+                                <span className="m-0 border border-1 bg-secondary px-2 text-dark">
+                                  {menu.qty}
+                                </span>
                                 <span
                                   className="hand border border-1 bg-secondary px-1"
                                   onClick={() => incQty(index)}
@@ -232,7 +277,9 @@ function RestoPage() {
                     Back
                   </button>
 
-                  <button className="btn btn-success">Pay Now</button>
+                  <button className="btn btn-success" onClick={getPaymentView}>
+                    Pay Now
+                  </button>
                 </div>
               </div>
             </div>
@@ -278,7 +325,6 @@ function RestoPage() {
                 data-bs-toggle="modal"
                 data-bs-target="#slideShow"
                 className="gallary btn btn-outline-light fw-bold border px-lg-4 px-2 py-2 text-dark  border-2 border border-dark fw-bold"
-                // onClick={() => setCarouselList(restaurant.thumbs)}
               >
                 Click to see Image Gallery
               </button>
