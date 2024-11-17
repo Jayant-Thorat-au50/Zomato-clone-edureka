@@ -1,6 +1,6 @@
 import React from "react";
 import './App.css'
-import HomePageZomato from "./components/HoamePage";
+import HomePageZomato from "./components/HomePage";
 import Zomatosearchpage from "./components/Zomatosearchpage";
 import RestoPage from "./components/RestoPage";
 import PageNotFound from "./components/PageNotFound";

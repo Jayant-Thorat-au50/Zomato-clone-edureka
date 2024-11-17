@@ -26,8 +26,8 @@ function UseRestaurantsForTheSElectedLocation(selectedLocation) {
         list: data,
         message:
           data.length > 1
-            ? `${data.length} Restaurants found`
-            : `${data.length} Restaurant found`,
+            ? `${data.length} Restaurants found in the city`
+            : `${data.length} Restaurant found in the city`,
       });
       setShowRestaurants(true);
     } catch (error) {

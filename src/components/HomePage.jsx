@@ -6,7 +6,7 @@ import UseMealTypes from "../Hooks/UseMealTypes";
 import UseLocations from "../Hooks/UseLocations";
 import UseRestaurantsForTheSElectedLocation from "../Hooks/UseRestaurantsForTheSElectedLocation";
 
-function HoamePage() {
+function HomePage() {
   let initDataOflocation = {
     _id: "",
     name: "",
@@ -62,11 +62,14 @@ function HoamePage() {
           </section>
 
           <section className="d-flex justify-content-center align-items-start flex-lg-row flex-column gap-lg-1 gap-2 col-12 my-4 mb-5  ">
-            <div className="col-lg-2 col-12 input-wrapper">
+          <div className="col-lg-2 col-12 input-wrapper">
+          <div className="fs-2  col-lg-0 col-1 px-4 d-flex justify-content-center h-100 align-items-center  my-auto   location-icon">
+          <i className="fa-solid fa-location-crosshairs "></i>
+                </div>
               <input
                 type="text"
-                placeholder="Please enter a location"
-                className="col-lg-12 col-11 m-lg-0 m-auto form-check border border-0 search-text two_inputs_childs locationInput"
+                placeholder="      Please enter a location"
+                className="col-lg-12 text-center col-11 m-lg-0 m-auto form-check border border-0 search-text two_inputs_childs locationInput"
                 readOnly
                 value={selectedLocation.name}
                 onChange={() => getSelectedLocationDetails()}
@@ -92,15 +95,14 @@ function HoamePage() {
             </div>
 
             <div className="col-lg-4 col-12 d-flex align-items-center input-wrapper justify-content-start   ">
-              {/* <i className="fa-regular fa-magnifying-glass col-1 bg-white fs-2"></i> */}
               <div className="col-11 col-lg-12 d-flex  m-lg-0 mx-auto ">
-                <div className="fs-2  col-lg-0 col-1 px-2 bg-white search-icon">
-                  <IoSearch />
+                <div className="fs-2  col-lg-0 col-1 px-4 my-auto  search-icon">
+                <i className="fa-solid fa-magnifying-glass"></i>
                 </div>
                 <input
                   type="text"
-                  placeholder={restaurantList.message}
-                  className="col-11 m-lg-0  col-lg-10 input-restaurant form-check border border-0 search-text two_inputs_childs"
+                  placeholder={'      ' + restaurantList.message}
+                  className="col-12 m-lg-0 text-start col-lg-11 input-restaurant form-check border border-0 search-text two_inputs_childs"
                   readOnly
                   onClick={() => setShowRestaurants(!showrestaurants)}
                 />
@@ -182,4 +184,4 @@ function HoamePage() {
   );
 }
 
-export default HoamePage;
+export default HomePage;
