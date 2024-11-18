@@ -37,9 +37,22 @@ function Header() {
     const {data} = await axios.post(url, sendData);
 
     console.log(data);
-    
-
   }
+
+  const login = async () => {
+
+    const sendData = {
+      email:userDetails.email,
+      password:userDetails.password
+    }
+
+    const url = "http://localhost:3056/login"
+
+    const {data} = await axios.post(url, sendData)
+
+    console.log(data);
+    
+   }
 
   return (
     <>
@@ -235,27 +248,45 @@ function Header() {
             </div>
             <div className="modal-body">
               <form action="">
-                <div className="form-floating mb-3">
+              <div className="input-group mb-3">
+                  <span
+                    className="input-group-text bg-success"
+                    id="basic-addon1"
+                  >
+                    <i class="fa-regular fa-envelope"></i>
+                  </span>
                   <input
-                    type="email"
+                    type="text"
                     className="form-control"
-                    id="floatingInput"
-                    placeholder="name@example.com"
+                    placeholder="Email"
+                    aria-label="Email"
+                    aria-describedby="basic-addon1"
+                    onChange={setInputData}
+                    name="email"
+                    value={userDetails.email}
                   />
-                  <label htmlFor="floatingInput">Email address</label>
                 </div>
-                <div className="form-floating ">
+                <div className="input-group mb-3">
+                  <span
+                    className="input-group-text bg-warning"
+                    id="basic-addon1"
+                  >
+                 <i className="fa-solid fa-key"></i>
+                  </span>
                   <input
                     type="password"
                     className="form-control"
-                    id="floatingInput"
-                    placeholder="name@example.com"
+                    placeholder="password"
+                    aria-label="password"
+                    aria-describedby="basic-addon1"
+                    onChange={setInputData}
+                    name="password"
+                    value={userDetails.password}
                   />
-                  <label htmlFor="floatingInput">Password</label>
                 </div>
               </form>
             </div>
-            <button type="button" className="btn btn-primary col-2 mx-auto">
+            <button type="button" className="btn btn-primary col-2 mx-auto" onClick={()=> login()}>
               login
             </button>
             <div className="modal-footer">
