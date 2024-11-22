@@ -1,20 +1,28 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { json, Link } from "react-router-dom";
 import "../RestoPage.css";
 import axios from "axios";
 
-function Header() {
+function Header({ page }) {
   const initialUserData = {
     fullName: "",
     email: "",
     mobile_no: "",
     password: "",
-    confirmPassword:"",
+    confirmPassword: "",
     address: "",
   };
 
   const [showPassword, setShowPassword] = useState(false);
   const [userDetails, setUserDetails] = useState({ ...initialUserData });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  let dataInLocal = localStorage.getItem('user');
+   dataInLocal = dataInLocal===null ? null : JSON.parse(dataInLocal)
+  const [loginDetailsInLocal] = useState(dataInLocal)
+  
+  console.log(loginDetailsInLocal);
+  
 
   const setInputData = (e) => {
     const { name } = e.target;
@@ -22,37 +30,43 @@ function Header() {
     setUserDetails({ ...userDetails, [name]: e.target.value });
   };
 
-  const signUp = async ()=>{
-
+  const signUp = async () => {
     const sendData = {
       name: userDetails.fullName,
-        email: userDetails.email,
-        password: userDetails.password,
-        mobile: userDetails.mobile_no,
-        confirmPassword :userDetails.confirmPassword,
-        address: userDetails.address,
-    }
+      email: userDetails.email,
+      password: userDetails.password,
+      mobile: userDetails.mobile_no,
+      confirmPassword: userDetails.confirmPassword,
+      address: userDetails.address,
+    };
 
-      const url = "http://localhost:3056/signUp"
-    const {data} = await axios.post(url, sendData);
+    const url = "http://localhost:3056/signUp";
+    const { data } = await axios.post(url, sendData);
+
+    if (data.success == true) {
+      alert("registered successfully");
+    } else alert(data.message);
 
     console.log(data);
-  }
+  };
 
   const login = async () => {
-
     const sendData = {
-      email:userDetails.email,
-      password:userDetails.password
+      email: userDetails.email,
+      password: userDetails.password,
+    };
+
+    const url = "http://localhost:3056/login";
+
+    const { data } = await axios.post(url, sendData);
+    if (data.success == true) {
+      alert("user logged in successfully");
+      localStorage.setItem("user", JSON.stringify(data.message));
+    } else {
+      alert(data.message);
     }
-
-    const url = "http://localhost:3056/login"
-
-    const {data} = await axios.post(url, sendData)
-
     console.log(data);
-    
-   }
+  };
 
   return (
     <>
@@ -203,7 +217,7 @@ function Header() {
             <button
               type="button"
               className="btn btn-primary  col-lg-2 col-4 m-auto"
-              onClick={()=>signUp()}
+              onClick={() => signUp()}
             >
               Sign Up
             </button>
@@ -248,7 +262,7 @@ function Header() {
             </div>
             <div className="modal-body">
               <form action="">
-              <div className="input-group mb-3">
+                <div className="input-group mb-3">
                   <span
                     className="input-group-text bg-success"
                     id="basic-addon1"
@@ -271,7 +285,7 @@ function Header() {
                     className="input-group-text bg-warning"
                     id="basic-addon1"
                   >
-                 <i className="fa-solid fa-key"></i>
+                    <i className="fa-solid fa-key"></i>
                   </span>
                   <input
                     type="password"
@@ -286,7 +300,11 @@ function Header() {
                 </div>
               </form>
             </div>
-            <button type="button" className="btn btn-primary col-2 mx-auto" onClick={()=> login()}>
+            <button
+              type="button"
+              className="btn btn-primary col-2 mx-auto"
+              onClick={() => login()}
+            >
               login
             </button>
             <div className="modal-footer">
@@ -303,30 +321,50 @@ function Header() {
           </div>
         </div>
       </div>
-      <section className="row header-resto">
-        <section className="col-lg-12  bg-danger header-resto ">
-          <header className="container col-11  d-flex justify-content-between align-items-center py-lg-3 py-1 px-0 ">
-            <p className="m-0 fs-3 bg-white text-danger brand fw-bold">
-              <Link to={"/"} className="text-danger">
-                e!
-              </Link>
+      <section className="row header-resto ">
+        <section
+          className={
+            page === "home"
+              ? "col-lg-12   bg-transparent "
+              : "col-lg-12  bg-danger   "
+          }
+        >
+          <header className="container col-lg-12 d-flex justify-content-between align-items-center py-lg-3 py-1 px-lg-0  px-2">
+            {page === "home" ? (
+              <p></p>
+            ) : (
+              <p className="m-0 fs-3 bg-white text-danger brand fw-bold">
+                <Link to={"/"} className="text-danger">
+                  e!
+                </Link>
+              </p>
+            )}
+            { loginDetailsInLocal ? <span className=" d-flex justify-content-center  align-items-center border border-2 border-black fw-bold text-white fs-5 gap-1 text-capitalize"><p>
+              Welcome {loginDetailsInLocal.name} 
             </p>
-            <div>
+             
+             <button className=" btn btn-dark fw-bold  bg-warning">
+              logout
+             </button>
+
+            </span>:
+            <div className=" d-flex">
               <button
-                className="btn border-0 text-white fs-5 "
+                className="btn border-0 text-white fs-5 d-lg-block d-none"
                 data-bs-toggle="modal"
                 data-bs-target="#exampleModalLogin"
               >
                 Login
               </button>
               <button
-                className="btn btn-outline-light fs-5 px-lg-3 py-lg-1 px-lg-2 px-2  py-0"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
+              className="btn btn-outline-light fs-5 px-lg-3 py-lg-1 px-lg-2 px-2 d-lg-block d-none  py-0"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
               >
                 Create an account
               </button>
             </div>
+              }
           </header>
         </section>
       </section>

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import "./HomePage.css";
 import { Link, useNavigate } from "react-router-dom";
-import { IoSearch } from "react-icons/io5";
 import UseMealTypes from "../Hooks/UseMealTypes";
 import UseLocations from "../Hooks/UseLocations";
 import UseRestaurantsForTheSElectedLocation from "../Hooks/UseRestaurantsForTheSElectedLocation";
+import Header from "./Header/Header";
 
 function HomePage() {
   let initDataOflocation = {
@@ -40,16 +40,12 @@ function HomePage() {
 
   return (
     <section className="row">
-      <section className="col-12  bg-danger header">
-        <header className="col-12 flow py-4 mt-2">
-          <section className="container col-12 d-lg-flex flex-row justify-content-end d-none">
-            <button className="btn text-white m-0 fs-4">Login</button>
-            <button className="btn btn-outline-light px-2 m-0 fs-5 py-0">
-              Create an account
-            </button>
-          </section>
-        </header>
-
+      <section className="col-12  bg-danger header ">
+  
+        <Header
+        page={'home'}
+        />
+  
         <section className="header-main">
           <section className="col-12 d-flex justify-content-center">
             <p className="brand bg-white fs-1 text-danger fw-bold">e!</p>
@@ -68,7 +64,7 @@ function HomePage() {
                 </div>
               <input
                 type="text"
-                placeholder="      Please enter a location"
+                placeholder="  Please enter a location"
                 className="col-lg-12 text-center col-11 m-lg-0 m-auto form-check border border-0 search-text two_inputs_childs locationInput"
                 readOnly
                 value={selectedLocation.name}
