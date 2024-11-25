@@ -1,14 +1,26 @@
-import React from "react";
-
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import "./Zomatosearchpage.css";
 import Header from "./Header/Header";
 
+import UseLocations from "../Hooks/UseLocations";
+import UseRestaurantsForTheSElectedLocation from "../Hooks/UseRestaurantsForTheSElectedLocation";
+
 function Zomatosearchpage() {
+  const [selectedLocation, setSelectedLocation] = useState(null);
+
+  const [locations] = UseLocations();
+
+  const [restaurantList] =
+    UseRestaurantsForTheSElectedLocation(selectedLocation);
+
+  
+
   return (
     <>
       <section className="row">
         <section className="col-12 bg-danger">
-          <Header/>
+          <Header />
         </section>
 
         <section className="  bg-light col-12 border">
@@ -45,8 +57,18 @@ function Zomatosearchpage() {
                       Select Location
                     </label>
 
-                    <select name="" className="text-muted form-select" id="">
-                      <option value="">---select location---</option>
+                    <select
+                      name=""
+                      className="text-muted form-select"
+                      id=""
+                      onChange={(e)=>setSelectedLocation(locations[e.target.value])}
+                    >
+                      <option value="">--Select Location--</option>
+                      {locations.map((loc, index) => (
+                        <option value={index} key={loc.name}>
+                          {loc.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -145,7 +167,7 @@ function Zomatosearchpage() {
                   </div>
 
                   <div className="my-3">
-                    <label htmlhtmlFor="" className="h4 text-primary fw-bold">
+                    <label htmlFor="" className="h4 text-primary fw-bold">
                       Sort
                     </label>
 
@@ -175,93 +197,58 @@ function Zomatosearchpage() {
               </section>
 
               <section className="col-lg-8 col-12 mt-lg-0 mt-2 ">
-                <article className="w-100 b-shadow col-12 p-lg-4 p-4  pt-lg-4 pt-3 mb-4 bg-white">
-                  <section className="d-flex col-12 py-lg-2  gap-lg-5 gap-4 justify-content-lg-start justify-content-between">
-                    <img
-                      src="./shutterstock_1154073754@2x 1.png"
-                      alt=""
-                      height="100px"
-                      width="100px"
-                      className="display-img d-lg-block d-none "
-                    />
-                    <img
-                      src="./shutterstock_1154073754@2x 1.png"
-                      alt=""
-                      height="100px"
-                      width="130px"
-                      className="img-sm d-lg-none d-block  "
-                    />
+                <h4>{`found ${restaurantList.list.length} restaurants in `}</h4>
+                {restaurantList.list.map((restaurant) => (
+                  <>
+              
+                  <article
+                    className="w-100 b-shadow col-12 p-lg-4 p-4  pt-lg-4 pt-3 mb-4 bg-white"
+                    key={restaurant._id}
+                  >
+                    <section className="d-flex col-12 py-lg-2  gap-lg-5 gap-4 justify-content-lg-start justify-content-between">
+                      <img
+                        src={restaurant.thumb}
+                        alt=""
+                        height="100px"
+                        width="100px"
+                        className="display-img d-lg-block d-none "
+                      />
+                      <img
+                        src={restaurant.thumb}
+                        alt=""
+                        height="100px"
+                        width="130px"
+                        className="img-sm d-lg-none d-block  "
+                      />
 
-                    <div className=" d-flex  col-8 flex-column">
-                      <p className="h4 fw-bold header-text-color p-0 my-lg-1 my-0">
-                        The Big Chill Cakery
-                      </p>
-                      <p className="fw-bold header-text-color p-0 my-lg-3 my-0">
-                        FORT
-                      </p>
-                      <p className="text-muted p-0 my-lg-2 my-0">
-                        Shop 1, Plot D, Samruddhi Complex, Chincholi …
-                      </p>
-                    </div>
-                  </section>
+                      <div className=" d-flex  col-8 flex-column">
+                        <p className="h4 fw-bold header-text-color p-0 my-lg-1 my-0">
+                          {restaurant.name}
+                        </p>
+                        <p className="fw-bold header-text-color p-0 my-lg-3 my-0">
+                          {restaurant.locality}
+                        </p>
+                        <p className="text-muted p-0 my-lg-2 my-0">
+                          {restaurant.address}
+                        </p>
+                      </div>
+                    </section>
 
-                  <hr />
+                    <hr />
 
-                  <section className="d-flex">
-                    <div className="col-lg-3 col-6">
-                      <p className="m-0">CUISINES:</p>
-                      <p className="m-0"> COST FOR TWO:</p>
-                    </div>
-                    <div className="col-3 col-lg-3 col-6">
-                      <p className="m-0">Bakery</p>
-                      <p className="m-0">₹700</p>
-                    </div>
-                  </section>
-                </article>
-
-                <article className=" w-100 b-shadow   col-12 p-lg-4 p-4  pt-lg-4 pt-3 mb-4 bg-white">
-                  <section className="d-flex gap-4 py-lg-2">
-                    <img
-                      src="./shutterstock_1130181932@2x 2.png"
-                      alt=""
-                      height="100px"
-                      width="100px"
-                      className="display-img d-lg-block d-none"
-                    />
-                    <img
-                      src="./shutterstock_1154073754@2x 1.png"
-                      alt=""
-                      height="80px"
-                      width="130px"
-                      className="img-sm d-lg-none d-block "
-                    />
-
-                    <div>
-                      <p className="h4 fw-bold header-text-color p-0 my-lg-1 my-0 ">
-                        The Bake Studio
-                      </p>
-                      <p className="fw-bold header-text-color p-0 p-0 my-lg-3 my-0">
-                        FORT
-                      </p>
-                      <p className="text-muted p-0 my-lg-2 my-0">
-                        Shop 1, Plot D, Samruddhi Complex, Chincholi …
-                      </p>
-                    </div>
-                  </section>
-
-                  <hr />
-
-                  <section className="row d-lg-block d-lg-flex  col-12">
-                    <div className="col-lg-3 col-6">
-                      <p className="m-0">CUISINES:</p>
-                      <p className="m-0"> COST FOR TWO:</p>
-                    </div>
-                    <div className="col-3 col-6">
-                      <p className="m-0">Bakery</p>
-                      <p className="m-0">₹700</p>
-                    </div>
-                  </section>
-                </article>
+                    <section className="d-flex">
+                      <div className="col-lg-3 col-6">
+                        <p className="m-0">CUISINES:</p>
+                        <p className="m-0"> COST FOR TWO:</p>
+                      </div>
+                      <div className="col-3 col-lg-3 col-6">
+                        <p className="m-0">{restaurant.Cuisine[0].name}</p>
+                        <p className="m-0">{`₹${restaurant.cost}`}</p>
+                      </div>
+                    </section>
+                  </article>
+                  </>
+                ))}
               </section>
             </section>
           </section>

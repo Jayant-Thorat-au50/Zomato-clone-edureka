@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { json, Link } from "react-router-dom";
+import { json, Link, useNavigate } from "react-router-dom";
 import "../RestoPage.css";
 import axios from "axios";
 
@@ -17,11 +17,13 @@ function Header({ page }) {
   const [userDetails, setUserDetails] = useState({ ...initialUserData });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const navigate = useNavigate()
+
   let dataInLocal = localStorage.getItem('user');
    dataInLocal = dataInLocal===null ? null : JSON.parse(dataInLocal)
   const [loginDetailsInLocal] = useState(dataInLocal)
   
-  console.log(loginDetailsInLocal);
+  // console.log(loginDetailsInLocal);
   
 
   const setInputData = (e) => {
@@ -61,12 +63,19 @@ function Header({ page }) {
     const { data } = await axios.post(url, sendData);
     if (data.success == true) {
       alert("user logged in successfully");
+      window.location.assign('/')
       localStorage.setItem("user", JSON.stringify(data.message));
     } else {
       alert(data.message);
     }
     console.log(data);
   };
+
+  const logout = () => {
+    localStorage.removeItem('user')
+    alert('logged out successfully')
+    window.location.assign('/')
+  }
 
   return (
     <>
@@ -267,7 +276,7 @@ function Header({ page }) {
                     className="input-group-text bg-success"
                     id="basic-addon1"
                   >
-                    <i class="fa-regular fa-envelope"></i>
+                    <i className="fa-regular fa-envelope"></i>
                   </span>
                   <input
                     type="text"
@@ -334,16 +343,17 @@ function Header({ page }) {
               <p></p>
             ) : (
               <p className="m-0 fs-3 bg-white text-danger brand fw-bold">
-                <Link to={"/"} className="text-danger">
+                <p to={"/"} className="text-danger" style={{cursor:'pointer'}} onClick={()=> navigate('/')}>
                   e!
-                </Link>
+                </p>
               </p>
             )}
             { loginDetailsInLocal ? <span className=" d-flex justify-content-center  align-items-center border border-2 border-black fw-bold text-white fs-5 gap-1 text-capitalize"><p>
               Welcome {loginDetailsInLocal.name} 
             </p>
              
-             <button className=" btn btn-dark fw-bold  bg-warning">
+             <button className=" btn btn-dark fw-bold  bg-warning"
+             onClick={()=> logout()}>
               logout
              </button>
 

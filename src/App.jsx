@@ -12,7 +12,7 @@ function App() {
       <section className=" container-fluid-lg ">
         <Routes>
           <Route path="/" element={<HomePageZomato />} />
-          <Route path="/search" element={<Zomatosearchpage />} />
+          <Route path="/meal/:restaurant_name" element={<Zomatosearchpage />} />
           <Route path="/restaurant_page/:restaurant_id" element={<RestoPage />} />
           <Route path="/*" element={<PageNotFound />} />
         </Routes>

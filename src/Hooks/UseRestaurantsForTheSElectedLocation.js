@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 
 function UseRestaurantsForTheSElectedLocation(selectedLocation) {
+
+
   const [restaurantList, setRestaurantList] = useState({
     list: [],
     message: "Search for restaurants",
@@ -29,8 +31,21 @@ function UseRestaurantsForTheSElectedLocation(selectedLocation) {
     }
   };
 
+  const restaurantsForTheSelectedMealType = async () => {
+    
+    const url = 'http://localhost:3056/restaurantsForTheSelectedMealType'
+    
+    const {data} = await axios.get(url);
+    setRestaurantList({list:data.message})
+    
+  }
+
   useEffect(() => {
-    getRestaurantListByLocationId();
+    if(selectedLocation === null){
+      restaurantsForTheSelectedMealType();
+    } else{
+      getRestaurantListByLocationId();
+    }
   }, [selectedLocation]);
   return [restaurantList, showrestaurants, setShowRestaurants];
 }

@@ -151,11 +151,12 @@ function HomePage() {
 
           <section className=" d-flex justify-content-between flex-wrap my-4 meal_type_list">
             {/* artcles list */}
-            <Link className="w-100 d-flex flex-wrap gap-2" to={"/Resto"}>
+            <div className="w-100 d-flex flex-wrap gap-2" >
               {mealtypesList.map((restaurant) => (
                 <article
                   key={restaurant._id}
                   className="article-shadow mb-4 gap-lg-0 meal-member gap-3 d-flex justify-content-start align-items-center bg-white pe-lg-4 p-0"
+                  onClick={()=> navigate(`meal/${restaurant.name}`)}
                 >
                   <img
                     src={restaurant.image}
@@ -172,7 +173,7 @@ function HomePage() {
                   </div>
                 </article>
               ))}
-            </Link>
+            </div>
           </section>
         </main>
       </section>
