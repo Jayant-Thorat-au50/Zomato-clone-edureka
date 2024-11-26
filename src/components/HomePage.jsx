@@ -151,15 +151,15 @@ function HomePage() {
 
           <section className=" d-flex justify-content-between flex-wrap my-4 meal_type_list">
             {/* artcles list */}
-            <div className="w-100 d-flex flex-wrap gap-2" >
-              {mealtypesList.map((restaurant) => (
+            <div className="w-100 d-flex flex-wrap justify-content-center gap-2" >
+              {mealtypesList.map(type => (
                 <article
-                  key={restaurant._id}
+                  key={type._id}
                   className="article-shadow mb-4 gap-lg-0 meal-member gap-3 d-flex justify-content-start align-items-center bg-white pe-lg-4 p-0"
-                  onClick={()=> navigate(`meal/${restaurant.name}`)}
+                  onClick={()=> navigate(`meal/${type.id}`)}
                 >
                   <img
-                    src={restaurant.image}
+                    src={type.image}
                     alt=""
                     height="140px"
                     width="160px"
@@ -167,9 +167,9 @@ function HomePage() {
                   />
                   <div className="px-lg-2 col-lg-8 ps-lg-3 px-0 ps-0 pe-1 gap-lg-0 gap-1 d-flex justify-content-evenly flex-column align-items-start m-0">
                     <p className="quick-search-text fw-bold fs-4 m-0">
-                      {restaurant.name}
+                      {type.name}
                     </p>
-                    <p className="text-muted fs-5 m-0">{restaurant.content}</p>
+                    <p className="text-muted fs-5 m-0">{type.content}</p>
                   </div>
                 </article>
               ))}

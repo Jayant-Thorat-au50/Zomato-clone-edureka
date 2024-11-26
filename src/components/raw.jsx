@@ -1,342 +1,307 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { Carousel } from "react-responsive-carousel";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "./Header";
 
-function Restaurant() {
-  let { id } = useParams();
-  let [rDetails, setRDetails] = useState(null);
-  let [rMenuList, setRMenuList] = useState([]);
-  let [totalPrice, setTotalPrice] = useState(0);
-  let getRestaurantDetails = async () => {
-    let url = "http://localhost:3040/api/get-restaurant-details/" + id;
-    let { data } = await axios.get(url);
-    setRDetails(data.result);
+function Search() {
+  let navigate = useNavigate();
+  let { id, name } = useParams();
+  let [filter, setFilter] = useState({
+    meal_type: id,
+    sort: 1,
+    cuisine: [],
+  });
+  let [locations, setLocations] = useState([]);
+  let [restaurantList, setRestaurantList] = useState([]);
+  let getLocationList = async () => {
+    try {
+      let url = "http://localhost:3040/api/get-location-list";
+      let response = await axios.get(url);
+      let data = response.data;
+      setLocations(data.result);
+    } catch (error) {
+      alert("Server Error");
+      console.log(error);
+    }
   };
-  let getMenuItemList = async () => {
-    let url = "http://localhost:3040/api/get-menu-item-list/" + id;
-    let { data } = await axios.get(url);
-    setRMenuList(data.result);
-  };
-
-  let incQty = (index) => {
-    let _rMenuList = [...rMenuList];
-    _rMenuList[index].qty += 1;
-    totalPrice += _rMenuList[index].price;
-    setRMenuList(_rMenuList);
-    setTotalPrice(totalPrice);
-  };
-
-  let decQty = (index) => {
-    let _rMenuList = [...rMenuList];
-    _rMenuList[index].qty -= 1;
-    totalPrice -= _rMenuList[index].price;
-    setRMenuList(_rMenuList);
-    setTotalPrice(totalPrice);
+  let getFilterDetails = async () => {
+    let url = "http://localhost:3040/api/filter";
+    let { data } = await axios.post(url, filter);
+    setRestaurantList(data.result);
   };
 
-  let getPaymentView = async () => {
-    const url = "http://localhost:3040/api/create-order";
-    let { data } = await axios.post(url, { amount: totalPrice });
+  let setFilterData = (event, type) => {
+    let { value } = event.target;
+    let _filter = { ...filter };
+    switch (type) {
+      case "sort":
+        _filter["sort"] = Number(value);
+        break;
 
-    let options = {
-      key: "rzp_test_RB0WElnRLezVJ5", // Enter the Key ID generated from the Dashboard
-      amount: totalPrice * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-      currency: "INR",
-      name: "Zomato App",
-      description: "Make Your Now",
-      image:
-        "https://i.pinimg.com/originals/1a/17/ed/1a17ed134ffeb3461f5d0f3ca0ee227d.png",
-      order_id: data.order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-      handler: async function (response) {
-        let sendData = {
-          payment_id: response.razorpay_payment_id,
-          order_id: response.razorpay_order_id,
-          signature: response.razorpay_signature,
-        };
-        let url = "http://localhost:3040/api/verify-payment";
-        let { data } = await axios.post(url, sendData);
-        console.log(data);
-      },
-      prefill: {
-        name: "Deepakkumar Shinde",
-        email: "deepakkumar@gmail.com",
-        contact: "989098765681",
-      },
-    };
-    var rzp1 = new window.Razorpay(options);
-    rzp1.open();
+      case "location":
+        value = Number(value);
+        if (value === -1) {
+          delete _filter["location"];
+        } else {
+          _filter["location"] = value;
+        }
+        break;
+      case "cuisine":
+        if (event.target.checked) {
+          _filter["cuisine"].push(Number(value));
+        } else {
+          _filter["cuisine"] = _filter["cuisine"].filter(
+            (cuisine) => cuisine !== Number(value)
+          );
+        }
+
+        break;
+      default:
+        break;
+    }
+
+    setFilter(_filter);
   };
 
   useEffect(() => {
-    getRestaurantDetails();
-  }, []);
+    getLocationList();
+  });
+  useEffect(() => {
+    getFilterDetails();
+  }, [filter]);
 
   return (
     <>
-      {rDetails === null ? null : (
-        <>
-          <div
-            className="modal fade"
-            id="slideShow"
-            tabIndex="-1"
-            aria-labelledby="staticBackdropLabel"
-            aria-hidden="true"
-          >
-            <div className="modal-dialog modal-lg " style={{ height: "75vh " }}>
-              <div className="modal-content">
-                <div className="modal-body h-75">
-                  <Carousel showThumbs={false} infiniteLoop={true}>
-                    {rDetails.thumb.map((value, index) => {
-                      return (
-                        <div key={index} className="w-100">
-                          <img src={"/images/" + value} />
-                        </div>
-                      );
-                    })}
-                  </Carousel>
-                </div>
-              </div>
+      <Header />
+      {/* <!-- section --> */}
+      <div className="row">
+        <div className="col-12 px-5 pt-4">
+          <p className="h3"> {name} Search Result</p>
+        </div>
+        {/* <!-- food item --> */}
+        <div className="col-12 d-flex flex-wrap px-lg-5 px-md-5 pt-4">
+          <div className="food-shadow col-12 col-lg-3 col-md-4 me-5 p-3 mb-4">
+            <div className="d-flex justify-content-between">
+              <p className="fw-bold m-0">Filter</p>
+              <button
+                className="d-lg-none d-md-none btn"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseFilter"
+                aria-controls="collapseFilter"
+              >
+                <span className="fa fa-eye"></span>
+              </button>
             </div>
-          </div>
-          <div
-            className="modal fade"
-            id="exampleModalToggle"
-            aria-hidden="true"
-            aria-labelledby="exampleModalToggleLabel"
-            tabIndex="-1"
-          >
-            <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="exampleModalToggleLabel">
-                    {rDetails.name}
-                  </h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  ></button>
-                </div>
-                <div className="modal-body ">
-                  {rMenuList.map((menu, index) => {
+            {/* <!-- Collapse start  --> */}
+            <div className="collapse show" id="collapseFilter">
+              <div>
+                <label htmlFor="" className="form-label">
+                  Select Location
+                </label>
+                <select
+                  className="form-select form-select-sm"
+                  onChange={(event) => setFilterData(event, "location")}
+                >
+                  <option value="-1">----select----</option>
+                  {locations.map((location, index) => {
                     return (
-                      <div className="row p-2" key={menu._id}>
-                        <div className="col-8">
-                          <p className="mb-1 h6">{menu.name}</p>
-                          <p className="mb-1">₹ {menu.price} /-</p>
-                          <p className="small text-muted">{menu.description}</p>
-                        </div>
-                        <div className="col-4 d-flex justify-content-end">
-                          <div className="menu-food-item">
-                            <img src={"/images/" + menu.image} alt="" />
-                            {menu.qty === 0 ? (
-                              <button
-                                onClick={() => incQty(index)}
-                                className="btn btn-primary btn-sm add"
-                              >
-                                Add
-                              </button>
-                            ) : (
-                              <div className="order-item-count section ">
-                                <span
-                                  className="hand"
-                                  onClick={() => decQty(index)}
-                                >
-                                  -
-                                </span>
-                                <span>{menu.qty}</span>
-                                <span
-                                  className="hand"
-                                  onClick={() => incQty(index)}
-                                >
-                                  +
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <hr className=" p-0 my-2" />
-                      </div>
+                      <option key={location._id} value={location.location_id}>
+                        {location.name}, {location.city}
+                      </option>
                     );
                   })}
-
-                  {totalPrice > 0 ? (
-                    <div className="d-flex justify-content-between">
-                      <h3>Total: {totalPrice} /-</h3>
-                      <button
-                        className="btn btn-danger"
-                        data-bs-target="#exampleModalToggle2"
-                        data-bs-toggle="modal"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  ) : null}
+                </select>
+              </div>
+              <p className="mt-4 mb-2 fw-bold">Cuisine</p>
+              <div>
+                <div className="ms-1">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    value={1}
+                    onClick={(event) => setFilterData(event, "cuisine")}
+                  />
+                  <label htmlFor="" className="form-check-label ms-1">
+                    North Indian
+                  </label>
+                </div>
+                <div className="ms-1">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    value={2}
+                    onClick={(event) => setFilterData(event, "cuisine")}
+                  />
+                  <label htmlFor="" className="form-check-label ms-1">
+                    South Indian
+                  </label>
+                </div>
+                <div className="ms-1">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    value={3}
+                    onClick={(event) => setFilterData(event, "cuisine")}
+                  />
+                  <label htmlFor="" className="form-check-label ms-1">
+                    Chinese
+                  </label>
+                </div>
+                <div className="ms-1">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    value={4}
+                    onClick={(event) => setFilterData(event, "cuisine")}
+                  />
+                  <label htmlFor="" className="form-check-label ms-1">
+                    Fast Food
+                  </label>
+                </div>
+                <div className="ms-1">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    value={5}
+                    onClick={(event) => setFilterData(event, "cuisine")}
+                  />
+                  <label htmlFor="" className="form-check-label ms-1">
+                    Street Food
+                  </label>
+                </div>
+              </div>
+              <p className="mt-4 mb-2 fw-bold">Cost For Two</p>
+              <div>
+                <div className="ms-1">
+                  <input type="radio" className="form-check-input" />
+                  <label htmlFor="" className="form-check-label ms-1">
+                    less then 500
+                  </label>
+                </div>
+                <div className="ms-1">
+                  <input type="radio" className="form-check-input" />
+                  <label htmlFor="" className="form-check-label ms-1">
+                    500 to 1000
+                  </label>
+                </div>
+                <div className="ms-1">
+                  <input type="radio" className="form-check-input" />
+                  <label htmlFor="" className="form-check-label ms-1">
+                    1000 to 1500
+                  </label>
+                </div>
+                <div className="ms-1">
+                  <input type="radio" className="form-check-input" />
+                  <label htmlFor="" className="form-check-label ms-1">
+                    1500 to 2000
+                  </label>
+                </div>
+                <div className="ms-1">
+                  <input type="radio" className="form-check-input" />
+                  <label htmlFor="" className="form-check-label ms-1">
+                    2000+
+                  </label>
+                </div>
+              </div>
+              <p className="mt-4 mb-2 fw-bold">Sort</p>
+              <div>
+                <div className="ms-1">
+                  <input
+                    type="radio"
+                    className="form-check-input"
+                    value={1}
+                    onClick={(event) => setFilterData(event, "sort")}
+                    name="sort"
+                  />
+                  <label htmlFor="" className="form-check-label ms-1">
+                    Price low to high
+                  </label>
+                </div>
+                <div className="ms-1">
+                  <input
+                    type="radio"
+                    className="form-check-input"
+                    value={-1}
+                    name="sort"
+                    onClick={(event) => setFilterData(event, "sort")}
+                  />
+                  <label htmlFor="" className="form-check-label ms-1">
+                    Price high to low
+                  </label>
                 </div>
               </div>
             </div>
+            {/* <!-- Collapse end --> */}
           </div>
-          <div
-            className="modal fade"
-            id="exampleModalToggle2"
-            aria-hidden="true"
-            aria-labelledby="exampleModalToggleLabel2"
-            tabIndex="-1"
-          >
-            <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="exampleModalToggleLabel2">
-                    User Details
-                  </h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  ></button>
-                </div>
-                <div className="modal-body">
-                  <div className="mb-3">
-                    <label
-                      htmlFor="exampleFormControlInput1"
-                      className="form-label"
-                    >
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="exampleFormControlInput1"
-                      placeholder="Enter full Name"
-                      value="deepakkumar"
-                      onChange={() => {}}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label
-                      htmlFor="exampleFormControlInput1"
-                      className="form-label"
-                    >
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="exampleFormControlInput1"
-                      placeholder="name@example.com"
-                      value="deepak@gmail.com"
-                      onChange={() => {}}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label
-                      htmlFor="exampleFormControlTextarea1"
-                      className="form-label"
-                    >
-                      Address
-                    </label>
-                    <textarea
-                      className="form-control"
-                      id="exampleFormControlTextarea1"
-                      rows="3"
-                      value="Nashik"
-                      onChange={() => {}}
-                    ></textarea>
-                  </div>
-                  <i>
-                    Your payment for this order is{" "}
-                    <b className="text-primary">{totalPrice} /-</b>
-                  </i>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    className="btn btn-danger"
-                    data-bs-target="#exampleModalToggle"
-                    data-bs-toggle="modal"
-                  >
-                    Back
-                  </button>
-                  <button className="btn btn-success" onClick={getPaymentView}>
-                    Pay Now
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <Header />
-          {/* <!-- section -->  */}
-          <div className="row justify-content-center">
-            <div className="col-10">
-              <div className="row">
-                <div className="col-12 mt-5">
-                  <div className="restaurant-main-image position-relative">
+          {/* <!-- search result --> */}
+          <div className="col-12 col-lg-8 col-md-7">
+            {restaurantList.map((restaurant, index) => {
+              return (
+                <div
+                  key={restaurant._id}
+                  className="col-12 food-shadow p-4 mb-4"
+                  onClick={() =>
+                    navigate("/restaurant-details/" + restaurant._id)
+                  }
+                >
+                  <div className="d-flex align-items-center">
                     <img
-                      src={"/images/" + rDetails.image}
-                      alt=""
-                      className=""
+                      src={"/images/" + restaurant.image}
+                      className="food-item"
                     />
-                    <button
-                      className="btn btn-outline-light position-absolute btn-gallery"
-                      data-bs-toggle="modal"
-                      data-bs-target="#slideShow"
-                    >
-                      Click To Get Image Gallery
-                    </button>
+                    <div className="ms-5">
+                      <p className="h4 fw-bold">{restaurant.name}</p>
+                      <span className="fw-bold text-muted">
+                        {restaurant.locality}
+                      </span>
+                      <p className="m-0 text-muted">
+                        <i
+                          className="fa fa-map-marker fa-2x text-danger"
+                          aria-hidden="true"
+                        ></i>
+                        {restaurant.locality}, {restaurant.city}
+                      </p>
+                    </div>
+                  </div>
+                  <hr />
+                  <div className="d-flex">
+                    <div>
+                      <p className="m-0">CUISINES:</p>
+                      <p className="m-0">COST FOR TWO:</p>
+                    </div>
+                    <div className="ms-5">
+                      <p className="m-0 fw-bold">
+                        {restaurant.cuisine
+                          .map((cuisine) => {
+                            return cuisine.name;
+                          })
+                          .join(", ")}
+                      </p>
+                      <p className="m-0 fw-bold">
+                        <i className="fa fa-inr" aria-hidden="true"></i>
+                        {restaurant.min_price}
+                      </p>
+                    </div>
                   </div>
                 </div>
-                <div className="col-12">
-                  <h3 className="mt-4">{rDetails.name}</h3>
-                  <div className="d-flex justify-content-between">
-                    <ul className="list-unstyled d-flex gap-3">
-                      <li>Overview & Contact</li>
-                    </ul>
-                    <a
-                      className="btn btn-primary align-self-start"
-                      data-bs-toggle="modal"
-                      href="#exampleModalToggle"
-                      role="button"
-                      onClick={getMenuItemList}
-                    >
-                      Select Menu
-                    </a>
-                  </div>
-                  <hr className="mt-0" />
+              );
+            })}
 
-                  <div className="over-view">
-                    <p className="h5 mb-4">About this place</p>
-
-                    <p className="mb-0 fw-bold">Cuisine</p>
-                    <p>
-                      {rDetails.cuisine.map((value) => value.name).join(", ")}
-                    </p>
-
-                    <p className="mb-0 fw-bold">Average Cost</p>
-                    <p>₹ {rDetails.min_price} for two people (approx.)</p>
-                  </div>
-
-                  <div className="over-view">
-                    <p className="mb-0 fw-bold">Phone Number</p>
-                    <p>+{rDetails.contact_number}</p>
-
-                    <p className="mb-0 fw-bold">Address</p>
-                    <p>
-                      {rDetails.locality}, {rDetails.city}
-                    </p>
-                  </div>
-                </div>
-              </div>
+            <div className="col-12 pagination d-flex justify-content-center">
+              <ul className="pages">
+                <li>&lt;</li>
+                <li className="active">1</li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+                <li>&gt;</li>
+              </ul>
             </div>
           </div>
-        </>
-      )}
+        </div>
+      </div>
     </>
   );
 }
 
-export default Restaurant;
+export default Search;

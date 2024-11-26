@@ -5,16 +5,39 @@ import Header from "./Header/Header";
 
 import UseLocations from "../Hooks/UseLocations";
 import UseRestaurantsForTheSElectedLocation from "../Hooks/UseRestaurantsForTheSElectedLocation";
+import axios from "axios";
 
 function Zomatosearchpage() {
+  const [cuisinesList, setCuisineList] = useState([
+    { id: 1, name: "North Indian", checked: false },
+    { id: 2, name: "South Indian", checked: false },
+    { id: 3, name: "Chinese", checked: false },
+    { id: 4, name: "Fast Food", checked: false },
+    { id: 5, name: "Street Food", checked: false },
+  ]);
+
+  const { meal_type_id } = useParams();
+
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [north, setNorth] = useState(false);
 
   const [locations] = UseLocations();
 
   const [restaurantList] =
     UseRestaurantsForTheSElectedLocation(selectedLocation);
 
-  
+  const filter = async () => {
+    const filterObj = {
+      location_id: 1,
+      sort_min: 1,
+      sort_max: 900,
+    };
+    const url = "http://localhost:3056/filter";
+
+    const response = await axios.post(url, filterObj);
+
+    console.log(response);
+  };
 
   return (
     <>
@@ -61,7 +84,11 @@ function Zomatosearchpage() {
                       name=""
                       className="text-muted form-select"
                       id=""
-                      onChange={(e)=>setSelectedLocation(locations[e.target.value])}
+                      onChange={(e) =>{
+                        console.log(e.target.value);
+                        
+                        setSelectedLocation(locations[e.target.value])
+                      }}
                     >
                       <option value="">--Select Location--</option>
                       {locations.map((loc, index) => (
@@ -77,36 +104,30 @@ function Zomatosearchpage() {
                       Cuisine
                     </label>
 
-                    <div className="my-2 form-check">
-                      <input type="checkbox" className="form-check-input" />
-                      <label htmlFor="" className="form-check-label">
-                        North Indian
-                      </label>
-                    </div>
-                    <div className="my-2 form-check">
-                      <input type="checkbox" className="form-check-input" />
-                      <label htmlFor="" className="form-check-label">
-                        South Indian
-                      </label>
-                    </div>
-                    <div className="my-2 form-check">
-                      <input type="checkbox" className="form-check-input" />
-                      <label htmlFor="" className="form-check-label">
-                        Chinese
-                      </label>
-                    </div>
-                    <div className="my-2 form-check">
-                      <input type="checkbox" className="form-check-input" />
-                      <label htmlFor="" className="form-check-label">
-                        Fast Food
-                      </label>
-                    </div>
-                    <div className="my-2  form-check">
-                      <input type="checkbox" className="form-check-input" />
-                      <label htmlFor="" className="form-check-label">
-                        Street Food
-                      </label>
-                    </div>
+                    {cuisinesList.map((cuisine) => (
+                      <div className="my-2 form-check">
+                        <input
+                          type="checkbox"
+                          id="north"
+                          key={cuisine.id}
+                          checked={cuisine.checked}
+                          className="form-check-input "
+                          onChange={ e => {
+                            let newList = cuisinesList.map(c => {
+                              if (c.id == cuisine.id)cuisine.checked = e.target.checked;
+                               return c;
+                            });
+
+                            setCuisineList(newList);
+                            console.log(cuisine);
+                          }}
+                        />
+                        <label htmlFor="north" className="form-check-label">
+                          {cuisine.name}
+                        </label>
+                      </div>
+                    ))}
+
                   </div>
 
                   <div className="my-3">
@@ -197,56 +218,57 @@ function Zomatosearchpage() {
               </section>
 
               <section className="col-lg-8 col-12 mt-lg-0 mt-2 ">
-                <h4>{`found ${restaurantList.list.length} restaurants in `}</h4>
+                <h4>{`found ${restaurantList.list.length} restaurants in ${
+                  selectedLocation === null ? " " : selectedLocation.name
+                } `}</h4>
                 {restaurantList.list.map((restaurant) => (
                   <>
-              
-                  <article
-                    className="w-100 b-shadow col-12 p-lg-4 p-4  pt-lg-4 pt-3 mb-4 bg-white"
-                    key={restaurant._id}
-                  >
-                    <section className="d-flex col-12 py-lg-2  gap-lg-5 gap-4 justify-content-lg-start justify-content-between">
-                      <img
-                        src={restaurant.thumb}
-                        alt=""
-                        height="100px"
-                        width="100px"
-                        className="display-img d-lg-block d-none "
-                      />
-                      <img
-                        src={restaurant.thumb}
-                        alt=""
-                        height="100px"
-                        width="130px"
-                        className="img-sm d-lg-none d-block  "
-                      />
+                    <article
+                      className="w-100 b-shadow col-12 p-lg-4 p-4  pt-lg-4 pt-3 mb-4 bg-white"
+                      key={restaurant._id}
+                    >
+                      <section className="d-flex col-12 py-lg-2  gap-lg-5 gap-4 justify-content-lg-start justify-content-between">
+                        <img
+                          src={restaurant.thumb}
+                          alt=""
+                          height="100px"
+                          width="100px"
+                          className="display-img d-lg-block d-none "
+                        />
+                        <img
+                          src={restaurant.thumb}
+                          alt=""
+                          height="100px"
+                          width="130px"
+                          className="img-sm d-lg-none d-block  "
+                        />
 
-                      <div className=" d-flex  col-8 flex-column">
-                        <p className="h4 fw-bold header-text-color p-0 my-lg-1 my-0">
-                          {restaurant.name}
-                        </p>
-                        <p className="fw-bold header-text-color p-0 my-lg-3 my-0">
-                          {restaurant.locality}
-                        </p>
-                        <p className="text-muted p-0 my-lg-2 my-0">
-                          {restaurant.address}
-                        </p>
-                      </div>
-                    </section>
+                        <div className=" d-flex  col-8 flex-column">
+                          <p className="h4 fw-bold header-text-color p-0 my-lg-1 my-0">
+                            {restaurant.name}
+                          </p>
+                          <p className="fw-bold header-text-color p-0 my-lg-3 my-0">
+                            {restaurant.locality}
+                          </p>
+                          <p className="text-muted p-0 my-lg-2 my-0">
+                            {restaurant.address}
+                          </p>
+                        </div>
+                      </section>
 
-                    <hr />
+                      <hr />
 
-                    <section className="d-flex">
-                      <div className="col-lg-3 col-6">
-                        <p className="m-0">CUISINES:</p>
-                        <p className="m-0"> COST FOR TWO:</p>
-                      </div>
-                      <div className="col-3 col-lg-3 col-6">
-                        <p className="m-0">{restaurant.Cuisine[0].name}</p>
-                        <p className="m-0">{`₹${restaurant.cost}`}</p>
-                      </div>
-                    </section>
-                  </article>
+                      <section className="d-flex">
+                        <div className="col-lg-3 col-6">
+                          <p className="m-0">CUISINES:</p>
+                          <p className="m-0"> COST FOR TWO:</p>
+                        </div>
+                        <div className="col-3 col-lg-3 col-6">
+                          <p className="m-0">{restaurant.Cuisine[0].name}</p>
+                          <p className="m-0">{`₹${restaurant.cost}`}</p>
+                        </div>
+                      </section>
+                    </article>
                   </>
                 ))}
               </section>
