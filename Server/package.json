@@ -1,0 +1,22 @@
+{
+  "name": "zomato-api1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "author": "edureka jayant thorat",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "email-validator": "^2.0.4",
+    "express": "^4.18.2",
+    "mongoose": "^8.0.3",
+    "nodemon": "^3.0.2",
+    "razorpay": "^2.9.5",
+    "universal-hmac-sha256-js": "^3.0.2"
+  }
+}
