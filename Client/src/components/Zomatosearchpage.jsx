@@ -53,7 +53,7 @@ function Zomatosearchpage() {
           );
         }
         break;
-      case "location":
+       case "location":
         if (Number(value) == -1) {
           delete newFilterObj["location_id"];
         } else {
