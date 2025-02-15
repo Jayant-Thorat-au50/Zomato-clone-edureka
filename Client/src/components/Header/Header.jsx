@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { json, Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../RestoPage.css";
 import axios from "axios";
 import { toast } from 'react-hot-toast'
+import {useDispatch} from 'react-redux'
+import { register } from "../../../Redux/Slices/authslice";
 
 function Header({ page }) {
+
+ const dispath = useDispatch()
+
   const initialUserData = {
     fullName: "",
     email: "",
@@ -34,7 +39,7 @@ function Header({ page }) {
   };
 
   const signUp = async () => {
-    const sendData = {
+    let sendData = {
       name: userDetails.fullName,
       email: userDetails.email,
       password: userDetails.password,
@@ -43,19 +48,36 @@ function Header({ page }) {
       address: userDetails.address,
     };
 
+    if(!name || !email ||!password ||!mobile ||!confirmPassword ||!address){
+      return toast.error('every filed is required')
+    }
+
+    const response = await dispath(register(userDetails))
+
+    if(response.payload.success){
+      navigate('/')
+     setUserDetails({
+      fullName: "",
+      email: "",
+      mobile_no: "",
+      password: "",
+      confirmPassword: "",
+      address: "",
+     })
+    }
 
 
-  const url = "http://localhost:3056/signUp";
-  const { data } = await axios.post(url, sendData);
+  // const url = "http://localhost:3056/signUp";
+  // const { data } = await axios.post(url, sendData);
 
-  console.log(data);
+  // console.log(data);
   
-  if (data.success == true) {
-    toast.error('registered successfully you can login now')
-    window.location.assign('/')
-  } else{
-    return toast.error(data.message)
-  }
+  // if (data.success == true) {
+  //   toast.error('registered successfully you can login now')
+  //   window.location.assign('/')
+  // } else{
+  //   return toast.error(data.message)
+  // }
 
 
   }
@@ -347,7 +369,8 @@ function Header({ page }) {
           }
         >
           <header className="container col-lg-12 d-flex justify-content-between align-items-center py-lg-3 py-1 px-lg-0  px-2">
-            {page === "home" ? (
+          <div className=" d-flex justify-content-between align-items-center">
+          {page === "home" ? (
               <p></p>
             ) : (
               <p className="m-0 fs-3 bg-white text-danger brand fw-bold">
@@ -356,6 +379,11 @@ function Header({ page }) {
                 </p>
               </p>
             )}
+
+            <div>
+              <button className=" btn fs-5 bg-transparent border border-1 border-white text-white fw-medium">Add restaurant</button>
+            </div>
+          </div>
             {loginDetailsInLocal ? <span className=" d-flex justify-content-center  align-items-center border border-2 border-black fw-bold text-white fs-5 gap-1 text-capitalize"><p>
               Welcome {loginDetailsInLocal.name}
             </p>

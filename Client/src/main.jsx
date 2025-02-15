@@ -4,6 +4,8 @@ import App from './App.jsx'
 import './index.css'
 import { BrowserRouter } from "react-router-dom"
 import { Toaster } from 'react-hot-toast'
+import { Provider } from 'react-redux'
+import store from '../Redux/store.js'
 
 const toastOptions = {
   className: '',
@@ -17,12 +19,14 @@ const toastOptions = {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.Fragment>
-    <BrowserRouter>
+
+   <Provider store={store}>
+
+<BrowserRouter>
       <App />
       <Toaster
         toastOptions={toastOptions}
       />
     </BrowserRouter>
-  </React.Fragment>,
+   </Provider>
 )
